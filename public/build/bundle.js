@@ -9486,9 +9486,21 @@
       async init(props, state) {
         // set props/state
         this.update({
-          courses : Object.keys(await dashup.model('courses').count('name', true)),
+          courses : Object.keys(await props.dashup.page('courses').count('name', true)),
         });
         // update view
+      }
+      async onCourse(e) {
+        // get courses
+        const course = $(e.target).val(),
+          semesters =  Object.keys(await props.dashup.page('courses').where({
+            name : semester,
+          }).find()).map((s) => s.get('semester')); // array of semesters by course
+        // update
+        this.update({
+          course,
+          semester,
+        });
       }
     },
 
@@ -9499,11 +9511,11 @@
       getComponent
     ) {
       return template(
-        '<div class="p-5 text-center bg-image" style=" background-image: url(\'https://akm-img-a-in.tosshub.com/indiatoday/images/story/201801/exam_preparation_tips.jpeg\'); height: 400px; "><div class="mask" style="background-color: rgba(0, 0, 0, 0.6)"><div class="d-flex justify-content-center align-items-center h-100"><div class="text-white"><h1 class="mb-3">Exam Helper</h1><h4 class="mb-3">Exam Solutions & More</h4></div></div></div></div><div><h1>Find Answer</h1><form><div class="form-group"><label for="course">Choose Course</label><select expr734="expr734" class="form-control"><option expr735="expr735"></option></select></div><button type="submit" class="btn btn-primary">Search</button></form></div>',
+        '<div class="p-5 text-center bg-image" style=" background-image: url(\'https://akm-img-a-in.tosshub.com/indiatoday/images/story/201801/exam_preparation_tips.jpeg\'); height: 400px; "><div class="mask" style="background-color: rgba(0, 0, 0, 0.6)"><div class="d-flex justify-content-center align-items-center h-100"><div class="text-white"><h1 class="mb-3">Exam Helper</h1><h4 class="mb-3">Exam Solutions & More</h4></div></div></div></div><div><h1>Find Answer</h1><form><div class="form-group"><label for="course">Choose Course</label><select expr55="expr55" class="form-control"><option expr56="expr56"></option></select></div><div class="form-group"><label for="course">Choose Semester</label><select expr57="expr57" class="form-control"><option expr58="expr58"></option></select></div><button type="submit" class="btn btn-primary">Search</button></form></div>',
         [
           {
-            'redundantAttribute': 'expr734',
-            'selector': '[expr734]',
+            'redundantAttribute': 'expr55',
+            'selector': '[expr55]',
 
             'expressions': [
               {
@@ -9535,7 +9547,7 @@
                       'evaluate': function(
                         scope
                       ) {
-                        return scope.name;
+                        return scope.course;
                       }
                     },
                     {
@@ -9545,7 +9557,7 @@
                       'evaluate': function(
                         scope
                       ) {
-                        return scope.name;
+                        return scope.course;
                       }
                     }
                   ]
@@ -9553,8 +9565,8 @@
               ]
             ),
 
-            'redundantAttribute': 'expr735',
-            'selector': '[expr735]',
+            'redundantAttribute': 'expr56',
+            'selector': '[expr56]',
             'itemName': 'course',
             'indexName': 'i',
 
@@ -9562,6 +9574,69 @@
               scope
             ) {
               return scope.state.courses;
+            }
+          },
+          {
+            'redundantAttribute': 'expr57',
+            'selector': '[expr57]',
+
+            'expressions': [
+              {
+                'type': expressionTypes.EVENT,
+                'name': 'onchange',
+
+                'evaluate': function(
+                  scope
+                ) {
+                  return (e) => scope.onCourse(e);
+                }
+              }
+            ]
+          },
+          {
+            'type': bindingTypes.EACH,
+            'getKey': null,
+            'condition': null,
+
+            'template': template(
+              ' ',
+              [
+                {
+                  'expressions': [
+                    {
+                      'type': expressionTypes.TEXT,
+                      'childNodeIndex': 0,
+
+                      'evaluate': function(
+                        scope
+                      ) {
+                        return scope.semester;
+                      }
+                    },
+                    {
+                      'type': expressionTypes.ATTRIBUTE,
+                      'name': 'value',
+
+                      'evaluate': function(
+                        scope
+                      ) {
+                        return scope.semester;
+                      }
+                    }
+                  ]
+                }
+              ]
+            ),
+
+            'redundantAttribute': 'expr58',
+            'selector': '[expr58]',
+            'itemName': 'course',
+            'indexName': 'i',
+
+            'evaluate': function(
+              scope
+            ) {
+              return scope.state.semester;
             }
           }
         ]
@@ -9658,7 +9733,7 @@
       getComponent
     ) {
       return template(
-        '<div class="app"><main-header expr693="expr693"></main-header><router expr694="expr694"></router><main-footer expr707="expr707"></main-footer></div>',
+        '<div class="app"><main-header expr0="expr0"></main-header><router expr1="expr1"></router><main-footer expr14="expr14"></main-footer></div>',
         [
           {
             'type': bindingTypes.TAG,
@@ -9685,8 +9760,8 @@
               }
             ],
 
-            'redundantAttribute': 'expr693',
-            'selector': '[expr693]'
+            'redundantAttribute': 'expr0',
+            'selector': '[expr0]'
           },
           {
             'type': bindingTypes.TAG,
@@ -9701,7 +9776,7 @@
             'slots': [
               {
                 'id': 'default',
-                'html': '<route expr695="expr695" path="/"></route><route expr697="expr697" path="/qna/:id"></route><route expr699="expr699" path="/add"></route><route expr701="expr701" path="/register"></route><route expr703="expr703" path="/login"></route><route expr705="expr705" path="/logout"></route>',
+                'html': '<route expr2="expr2" path="/"></route><route expr4="expr4" path="/qna/:id"></route><route expr6="expr6" path="/add"></route><route expr8="expr8" path="/register"></route><route expr10="expr10" path="/login"></route><route expr12="expr12" path="/logout"></route>',
 
                 'bindings': [
                   {
@@ -9717,7 +9792,7 @@
                     'slots': [
                       {
                         'id': 'default',
-                        'html': '<home-page expr696="expr696"></home-page>',
+                        'html': '<home-page expr3="expr3"></home-page>',
 
                         'bindings': [
                           {
@@ -9745,8 +9820,8 @@
                               }
                             ],
 
-                            'redundantAttribute': 'expr696',
-                            'selector': '[expr696]'
+                            'redundantAttribute': 'expr3',
+                            'selector': '[expr3]'
                           }
                         ]
                       }
@@ -9765,8 +9840,8 @@
                       }
                     ],
 
-                    'redundantAttribute': 'expr695',
-                    'selector': '[expr695]'
+                    'redundantAttribute': 'expr2',
+                    'selector': '[expr2]'
                   },
                   {
                     'type': bindingTypes.TAG,
@@ -9781,7 +9856,7 @@
                     'slots': [
                       {
                         'id': 'default',
-                        'html': '<event-page expr698="expr698"></event-page>',
+                        'html': '<event-page expr5="expr5"></event-page>',
 
                         'bindings': [
                           {
@@ -9819,8 +9894,8 @@
                               }
                             ],
 
-                            'redundantAttribute': 'expr698',
-                            'selector': '[expr698]'
+                            'redundantAttribute': 'expr5',
+                            'selector': '[expr5]'
                           }
                         ]
                       }
@@ -9839,8 +9914,8 @@
                       }
                     ],
 
-                    'redundantAttribute': 'expr697',
-                    'selector': '[expr697]'
+                    'redundantAttribute': 'expr4',
+                    'selector': '[expr4]'
                   },
                   {
                     'type': bindingTypes.IF,
@@ -9851,8 +9926,8 @@
                       return scope.props.dashup.page('auth').exists();
                     },
 
-                    'redundantAttribute': 'expr699',
-                    'selector': '[expr699]',
+                    'redundantAttribute': 'expr6',
+                    'selector': '[expr6]',
 
                     'template': template(
                       null,
@@ -9870,7 +9945,7 @@
                           'slots': [
                             {
                               'id': 'default',
-                              'html': '<add-page expr700="expr700"></add-page>',
+                              'html': '<add-page expr7="expr7"></add-page>',
 
                               'bindings': [
                                 {
@@ -9908,8 +9983,8 @@
                                     }
                                   ],
 
-                                  'redundantAttribute': 'expr700',
-                                  'selector': '[expr700]'
+                                  'redundantAttribute': 'expr7',
+                                  'selector': '[expr7]'
                                 }
                               ]
                             }
@@ -9940,8 +10015,8 @@
                       return !scope.props.dashup.page('auth').exists();
                     },
 
-                    'redundantAttribute': 'expr701',
-                    'selector': '[expr701]',
+                    'redundantAttribute': 'expr8',
+                    'selector': '[expr8]',
 
                     'template': template(
                       null,
@@ -9959,7 +10034,7 @@
                           'slots': [
                             {
                               'id': 'default',
-                              'html': '<register-page expr702="expr702"></register-page>',
+                              'html': '<register-page expr9="expr9"></register-page>',
 
                               'bindings': [
                                 {
@@ -9997,8 +10072,8 @@
                                     }
                                   ],
 
-                                  'redundantAttribute': 'expr702',
-                                  'selector': '[expr702]'
+                                  'redundantAttribute': 'expr9',
+                                  'selector': '[expr9]'
                                 }
                               ]
                             }
@@ -10029,8 +10104,8 @@
                       return !scope.props.dashup.page('auth').exists();
                     },
 
-                    'redundantAttribute': 'expr703',
-                    'selector': '[expr703]',
+                    'redundantAttribute': 'expr10',
+                    'selector': '[expr10]',
 
                     'template': template(
                       null,
@@ -10048,7 +10123,7 @@
                           'slots': [
                             {
                               'id': 'default',
-                              'html': '<login-page expr704="expr704"></login-page>',
+                              'html': '<login-page expr11="expr11"></login-page>',
 
                               'bindings': [
                                 {
@@ -10086,8 +10161,8 @@
                                     }
                                   ],
 
-                                  'redundantAttribute': 'expr704',
-                                  'selector': '[expr704]'
+                                  'redundantAttribute': 'expr11',
+                                  'selector': '[expr11]'
                                 }
                               ]
                             }
@@ -10118,8 +10193,8 @@
                       return scope.props.dashup.page('auth').exists();
                     },
 
-                    'redundantAttribute': 'expr705',
-                    'selector': '[expr705]',
+                    'redundantAttribute': 'expr12',
+                    'selector': '[expr12]',
 
                     'template': template(
                       null,
@@ -10137,7 +10212,7 @@
                           'slots': [
                             {
                               'id': 'default',
-                              'html': '<logout-page expr706="expr706"></logout-page>',
+                              'html': '<logout-page expr13="expr13"></logout-page>',
 
                               'bindings': [
                                 {
@@ -10165,8 +10240,8 @@
                                     }
                                   ],
 
-                                  'redundantAttribute': 'expr706',
-                                  'selector': '[expr706]'
+                                  'redundantAttribute': 'expr13',
+                                  'selector': '[expr13]'
                                 }
                               ]
                             }
@@ -10193,8 +10268,8 @@
             ],
 
             'attributes': [],
-            'redundantAttribute': 'expr694',
-            'selector': '[expr694]'
+            'redundantAttribute': 'expr1',
+            'selector': '[expr1]'
           },
           {
             'type': bindingTypes.TAG,
@@ -10221,8 +10296,8 @@
               }
             ],
 
-            'redundantAttribute': 'expr707',
-            'selector': '[expr707]'
+            'redundantAttribute': 'expr14',
+            'selector': '[expr14]'
           }
         ]
       );

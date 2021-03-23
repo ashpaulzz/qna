@@ -9483,7 +9483,9 @@
       /**
        * init
        */
+      
       async init(props, state) {
+        await props.dashup.building;
         // set props/state
         this.update({
           courses : Object.keys(await props.dashup.page('courses').count('name', true)),
@@ -9491,16 +9493,18 @@
         // update view
       }
       async onCourse(e) {
-        // get courses
-        const course = $(e.target).val(),
-          semesters =  Object.keys(await props.dashup.page('courses').where({
-            name : semester,
-          }).find()).map((s) => s.get('semester')); // array of semesters by course
-        // update
+        // get course
+        const course = $(e.target).val();
+        // log
+        console.log('course', course);
+        const semesters = (await this.props.dashup.page('courses').where({
+        name : course,
+        }).find()).map((c) => c.get('semester'));
+        // update state
         this.update({
-          course,
-          semester,
-        });
+        course,
+        semesters,
+  });
       }
     },
 
@@ -9511,11 +9515,11 @@
       getComponent
     ) {
       return template(
-        '<div class="p-5 text-center bg-image" style=" background-image: url(\'https://akm-img-a-in.tosshub.com/indiatoday/images/story/201801/exam_preparation_tips.jpeg\'); height: 400px; "><div class="mask" style="background-color: rgba(0, 0, 0, 0.6)"><div class="d-flex justify-content-center align-items-center h-100"><div class="text-white"><h1 class="mb-3">Exam Helper</h1><h4 class="mb-3">Exam Solutions & More</h4></div></div></div></div><div><h1>Find Answer</h1><form><div class="form-group"><label for="course">Choose Course</label><select expr55="expr55" class="form-control"><option expr56="expr56"></option></select></div><div class="form-group"><label for="course">Choose Semester</label><select expr57="expr57" class="form-control"><option expr58="expr58"></option></select></div><button type="submit" class="btn btn-primary">Search</button></form></div>',
+        '<div class="p-5 text-center bg-image" style=" background-image: url(\'https://akm-img-a-in.tosshub.com/indiatoday/images/story/201801/exam_preparation_tips.jpeg\'); height: 400px; "><div class="mask" style="background-color: rgba(0, 0, 0, 0.6)"><div class="d-flex justify-content-center align-items-center h-100"><div class="text-white"><h1 class="mb-3">Exam Helper</h1><h4 class="mb-3">Exam Solutions & More</h4></div></div></div></div><div><h1>Find Answer</h1><form><div class="form-group"><label for="course">Choose Course</label><select expr83="expr83" class="form-control"><option expr84="expr84"></option></select></div><div class="form-group"><label for="course">Choose Semester</label><select expr85="expr85" class="form-control"><option expr86="expr86"></option></select></div><button type="submit" class="btn btn-primary">Search</button></form></div>',
         [
           {
-            'redundantAttribute': 'expr55',
-            'selector': '[expr55]',
+            'redundantAttribute': 'expr83',
+            'selector': '[expr83]',
 
             'expressions': [
               {
@@ -9565,8 +9569,8 @@
               ]
             ),
 
-            'redundantAttribute': 'expr56',
-            'selector': '[expr56]',
+            'redundantAttribute': 'expr84',
+            'selector': '[expr84]',
             'itemName': 'course',
             'indexName': 'i',
 
@@ -9577,8 +9581,8 @@
             }
           },
           {
-            'redundantAttribute': 'expr57',
-            'selector': '[expr57]',
+            'redundantAttribute': 'expr85',
+            'selector': '[expr85]',
 
             'expressions': [
               {
@@ -9588,7 +9592,7 @@
                 'evaluate': function(
                   scope
                 ) {
-                  return (e) => scope.onCourse(e);
+                  return (e) => scope.onSem(e);
                 }
               }
             ]
@@ -9610,7 +9614,7 @@
                       'evaluate': function(
                         scope
                       ) {
-                        return scope.semester;
+                        return scope.semesters;
                       }
                     },
                     {
@@ -9620,7 +9624,7 @@
                       'evaluate': function(
                         scope
                       ) {
-                        return scope.semester;
+                        return scope.semesters;
                       }
                     }
                   ]
@@ -9628,15 +9632,15 @@
               ]
             ),
 
-            'redundantAttribute': 'expr58',
-            'selector': '[expr58]',
-            'itemName': 'course',
+            'redundantAttribute': 'expr86',
+            'selector': '[expr86]',
+            'itemName': 'semesters',
             'indexName': 'i',
 
             'evaluate': function(
               scope
             ) {
-              return scope.state.semester;
+              return scope.state.semesters;
             }
           }
         ]

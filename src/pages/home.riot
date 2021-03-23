@@ -20,8 +20,8 @@
       </div>
       <div class="form-group">
         <label for="course">Choose Semester</label>
-        <select class="form-control" onchange={ (e) => onCourse(e) }>
-          <option each={ (course, i) in state.semester } value={ semester }>{ semester }</option>
+        <select class="form-control" onchange={ (e) => onSem(e) }>
+          <option each={ (semesters, i) in state.semesters } value={ semesters }>{ semesters }</option>
         </select>
       </div>
       <button type="submit" class="btn btn-primary">Search</button>
@@ -70,7 +70,9 @@
       /**
        * init
        */
+      
       async init(props, state) {
+        await props.dashup.building;
         // set props/state
         this.update({
           courses : Object.keys(await props.dashup.page('courses').count('name', true)),
@@ -78,16 +80,18 @@
         // update view
       }
       async onCourse(e) {
-        // get courses
-        const course = $(e.target).val(),
-          semesters =  Object.keys(await props.dashup.page('courses').where({
-            name : semester,
-          }).find()).map((s) => s.get('semester')); // array of semesters by course
-        // update
+        // get course
+        const course = $(e.target).val();
+        // log
+        console.log('course', course);
+        const semesters = (await this.props.dashup.page('courses').where({
+        name : course,
+        }).find()).map((c) => c.get('semester'));
+        // update state
         this.update({
-          course,
-          semester,
-        });
+        course,
+        semesters,
+});
       }
     }
 

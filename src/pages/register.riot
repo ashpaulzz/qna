@@ -1,0 +1,66 @@
+<register-page>
+
+  <script>
+    // import moment
+    import moment from 'moment';
+
+		// export default
+    export default class HomePage {
+      /**
+       * get components
+       */
+      static get components() {
+        return {
+          
+        };
+      }
+
+      /**
+       * on before mount
+       */
+      onBeforeMount(props, state) {
+        // set moment
+        this.moment = moment;
+
+        // bind
+        this.init = this.init.bind(this);
+
+        // safe update
+        this.safeUpdate = () => {
+          this.update();
+        };
+      }
+
+      /**
+       * on mounted
+       */
+      onMounted(props, state) {
+        // init
+        this.init(props, state);
+      }
+
+      /**
+       * init
+       */
+      async init(props, state) {
+        // set props/state
+        if (!props) props = this.props;
+        if (!state) state = this.state;
+        const renderedLogin = await myDashup.page('auth').view('#element-selector', 'login', {
+          classes : {
+          // class names can allow you to alter the form view
+        },
+          onError : (err) => {
+          // something wrong happened
+          console.log(err);
+        },
+          onSuccess : (user) => {
+          // the login was successful
+          console.log(user);
+        }
+      });
+      }
+    }
+  </script>
+
+</register-page>

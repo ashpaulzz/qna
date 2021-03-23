@@ -1,0 +1,55 @@
+{
+  "name": "@dashup/shop",
+  "description": "",
+  "version": "1.0.0",
+  "dependencies": {
+    "@dashup/core": "^1.0.16",
+    "@riotjs/compiler": "^5.3.1",
+    "@riotjs/route": "^7.1.0",
+    "bootstrap": "^5.0.0-beta1",
+    "faker": "^5.1.0",
+    "fakerator": "^0.3.2",
+    "find-hashtags": "^1.0.1",
+    "fullpage.js": "^3.0.9",
+    "moment": "^2.29.1",
+    "node-sass-tilde-importer": "^1.0.2",
+    "random-words": "^1.1.1",
+    "riot": "^5.1.1",
+    "rollup-plugin-copy-assets": "^2.0.3",
+    "rollup-plugin-node-builtins": "^2.1.2",
+    "rollup-plugin-riot": "^5.0.0",
+    "rollup-plugin-scss": "^2.6.1",
+    "rollup-plugin-typescript": "^1.0.1",
+    "share-url": "^1.0.0",
+    "sirv-cli": "^1.0.10",
+    "typescript": "^4.1.3"
+  },
+  "engines": {
+    "node": ">= 8.0.0"
+  },
+  "main": "index.js",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "start": "sirv --single --host=0.0.0.0 public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dashup/shop.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dashup/shop/issues"
+  },
+  "homepage": "https://github.com/dashup/shop#readme",
+  "devDependencies": {
+    "@dashup/eslint-config-dashup": "0.0.1",
+    "@edenjs/eslint-config-eden": "^2.0.14",
+    "@rollup/plugin-commonjs": "^16.0.0",
+    "@rollup/plugin-node-resolve": "^10.0.0",
+    "rollup": "^2.34.0",
+    "rollup-plugin-livereload": "^2.0.0",
+    "rollup-plugin-terser": "^7.0.2"
+  }
+}

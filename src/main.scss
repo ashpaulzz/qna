@@ -1,0 +1,15 @@
+
+// import
+@import url('https://fonts.googleapis.com/css?family=Alegreya:400,500,700,800,900|Poppins:200,300,400,500,600,700,800,900&display=swap');
+
+// import bootstrap base
+@import '../node_modules/bootstrap/scss/_functions';
+
+// import local
+@import './scss/variables.scss';
+
+// import bootstrap
+@import '../node_modules/bootstrap/scss/bootstrap';
+
+// import our own bootstrap
+@import './scss/bootstrap.scss';

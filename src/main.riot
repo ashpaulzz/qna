@@ -1,0 +1,134 @@
+<main>
+	<div class="app">
+
+		<!-- HEADER -->
+    <main-header { ...getProps() } />
+		<!-- / HEADER -->
+
+		<router>
+			<!-- HOME -->
+			<route path="/" on-before-mount={ popToTop }>
+				<home-page { ...getProps() } />
+			</route>
+			<!-- / HOME -->
+			<!-- QNA -->
+			<route path="/qna/:id" on-before-mount={ popToTop }>
+				<event-page { ...props } event={ route.params.id } />
+			</route>
+			<!-- / QNA -->
+			<!-- USER ADD Answers -->
+			<route path="/add" if={ props.dashup.page('auth').exists() } on-before-mount={ popToTop }>
+				<add-page dashup-content={ state.dashupContent } { ...props } />
+			</route>
+			<!-- / USER ADD Answers -->
+			<!-- REGISTER -->
+			<route path="/register" if={ !props.dashup.page('auth').exists() } on-before-mount={ popToTop }>
+				<register-page dashup-content={ state.dashupContent } { ...props } />
+			</route>
+			<!-- / REGISTER -->
+			<!-- LOGIN/LOGOUT -->
+			
+			<route path="/login" if={ !props.dashup.page('auth').exists() } on-before-mount={ popToTop }>
+				<login-page dashup-content={ state.dashupContent } { ...props } />
+			</route>
+
+			<route path="/logout" if={ props.dashup.page('auth').exists() } on-before-mount={ popToTop }>
+				<logout-page { ...props } />
+			</route>
+			<!-- / LOGIN/LOGOUT -->
+		</router>
+
+		<!-- FOOTER -->
+    <main-footer { ...getProps() } />
+		<!-- / FOOTER -->
+	</div>
+
+	<script>
+		// import pages
+
+		import mainHeader from './main/header.riot';
+		import mainFooter from './main/footer.riot';
+
+		// import pages
+		import homePage from './pages/home.riot';
+		import loginPage from './pages/login.riot';
+		import registerPage from './pages/register.riot';
+		import addPage from './pages/add.riot';
+		import logoutPage from './pages/logout.riot';
+		import qnaPage from './pages/qna.riot';
+		
+		// export default
+    export default class Main {
+
+      /**
+       * local components
+       */
+      static get components() {
+				// return object
+				return {
+					homePage,
+					mainHeader,
+					mainFooter,
+				};
+			}
+
+			/**
+			 * on before mount
+			 */
+      async onMounted(props, state) {
+				// awiat building
+				await props.dashup.building;
+
+				// update building
+				this.update({
+					building : false,
+				});
+      }
+
+			/**
+			 * on before mount
+			 */
+			onBeforeMount(props, state) {
+        // initial state
+        this.state = {
+					building : true,
+        };
+
+        // safe update
+        this.safeUpdate = () => {
+          this.update();
+        };
+			}
+
+			/**
+			 * on before unmount
+			 */
+			onBeforeUnmount() {
+				// clear
+				if (this.interval) clearInterval(this.interval);
+			}
+
+			/**
+			 * pop to top
+			 */
+			popToTop() {
+				// scroll to top
+				$('body, html').prop('scrollTop', 0);
+			}
+
+			/**
+			 * get props
+			 */
+			getProps() {
+				// create new props
+				const props = { ...(this.props || {}) };
+
+				// set auth
+				props.safeUpdate = () => this.update();
+
+				// props
+				return props;
+			}
+    };
+	</script>
+</main>

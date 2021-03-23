@@ -11,24 +11,45 @@
   </div>
   <div>
     <h1>Find Answer</h1>
-    <form>
-      <div class="form-group">
-        <label for="course">Choose Course</label>
-        <select class="form-control" onchange={ (e) => onCourse(e) }>
-          <option each={ (course, i) in state.courses } value={ course }>{ course }</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="course">Choose Semester</label>
-        <select class="form-control" onchange={ (e) => onSem(e) }>
-          <option each={ (semesters, i) in state.semesters } value={ semesters }>{ semesters }</option>
-        </select>
-      </div>
-      <button type="submit" class="btn btn-primary">Search</button>
-    </form>
+<div class="container py-5">
+    <div class="mb-3">
+      <label class="form-label">
+        Select Course
+      </label>
+      <select class="form-control" placeholder="Select Course" onchange={ (e) => onCourse(e) }>
+        <option>Select Course</option>
+        <option each={ (course, i) in state.courses } value={ course }>
+          { course }
+        </option>
+      </select>
+    </div>
+    <div class="mb-3" if={ state.semesters }>
+      <label class="form-label">
+        Select Semester
+      </label>
+      <select class="form-control" placeholder="Select Semester" onchange={ (e) => onSemester(e) }>
+        <option>Select Semester</option>
+        <option each={ (semester, i) in state.semesters } value={ semester }>
+          { semester }
+        </option>
+      </select>
+    </div>
+    <div class="mb-3" if={ state.subjects }>
+      <label class="form-label">
+        Select Subject
+      </label>
+      <select class="form-control" placeholder="Select Semester" onchange={ (e) => onSubject(e) }>
+        <option>Select Subject</option>
+        <option each={ (subject, i) in state.subjects } value={ subject.get('_id') }>
+          { subject.get('name') }
+        </option>
+      </select>
+    </div>
+    <div class="mb-3" if={ state.subject }>
+      { JSON.stringify(state.subject.toJSON()) }
+    </div>
   </div>
-
-  <script>
+ <script>
     // import moment
     import moment from 'moment';
 
@@ -68,32 +89,69 @@
       }
 
       /**
+       * on course
+       */
+      async onCourse(e) {
+        // get course
+        const course = $(e.target).val();
+
+        // load semesters
+        this.update({
+          course : await this.props.dashup.page('courses').where({
+            name : course,
+          }).findOne(),
+          semesters : course ? Object.keys(await this.props.dashup.page('courses').where({
+            name : course,
+          }).count('semesters', true)).join(',').split(',').filter((s) => s && s.length) : null,
+        });
+      }
+
+      /**
+       * on course
+       */
+      async onSemester(e) {
+        // get course
+        const semester = $(e.target).val();
+
+        // load semesters
+        this.update({
+          semester,
+          subjects : semester && this.state.course ? await this.props.dashup.page('subjects').where({
+            courses : this.state.course.get('_id'),
+            semester,
+          }).find() : null,
+        });
+      }
+
+      /**
+       * on course
+       */
+      async onSubject(e) {
+        // get course
+        const id = $(e.target).val();
+
+        // load semesters
+        this.update({
+          subject : id ? await this.props.dashup.page('subjects').findById(id) : null,
+        });
+      }
+
+      /**
        * init
        */
-      
       async init(props, state) {
+        // set props/state
+        if (!props) props = this.props;
+        if (!state) state = this.state;
+        
+        // update view
         await props.dashup.building;
+
         // set props/state
         this.update({
           courses : Object.keys(await props.dashup.page('courses').count('name', true)),
         });
-        // update view
-      }
-      async onCourse(e) {
-        // get course
-        const course = $(e.target).val();
-        // log
-        console.log('course', course);
-        const semesters = (await this.props.dashup.page('courses').where({
-        name : course,
-        }).find()).map((c) => c.get('semester'));
-        // update state
-        this.update({
-        course,
-        semesters,
-});
       }
     }
-
   </script>
 </home-page>

@@ -9481,30 +9481,68 @@
       }
 
       /**
+       * on course
+       */
+      async onCourse(e) {
+        // get course
+        const course = $(e.target).val();
+
+        // load semesters
+        this.update({
+          course : await this.props.dashup.page('courses').where({
+            name : course,
+          }).findOne(),
+          semesters : course ? Object.keys(await this.props.dashup.page('courses').where({
+            name : course,
+          }).count('semesters', true)).join(',').split(',').filter((s) => s && s.length) : null,
+        });
+      }
+
+      /**
+       * on course
+       */
+      async onSemester(e) {
+        // get course
+        const semester = $(e.target).val();
+
+        // load semesters
+        this.update({
+          semester,
+          subjects : semester && this.state.course ? await this.props.dashup.page('subjects').where({
+            courses : this.state.course.get('_id'),
+            semester,
+          }).find() : null,
+        });
+      }
+
+      /**
+       * on course
+       */
+      async onSubject(e) {
+        // get course
+        const id = $(e.target).val();
+
+        // load semesters
+        this.update({
+          subject : id ? await this.props.dashup.page('subjects').findById(id) : null,
+        });
+      }
+
+      /**
        * init
        */
-      
       async init(props, state) {
+        // set props/state
+        if (!props) props = this.props;
+        if (!state) state = this.state;
+        
+        // update view
         await props.dashup.building;
+
         // set props/state
         this.update({
           courses : Object.keys(await props.dashup.page('courses').count('name', true)),
         });
-        // update view
-      }
-      async onCourse(e) {
-        // get course
-        const course = $(e.target).val();
-        // log
-        console.log('course', course);
-        const semesters = (await this.props.dashup.page('courses').where({
-        name : course,
-        }).find()).map((c) => c.get('semester'));
-        // update state
-        this.update({
-        course,
-        semesters,
-  });
       }
     },
 
@@ -9515,11 +9553,11 @@
       getComponent
     ) {
       return template(
-        '<div class="p-5 text-center bg-image" style=" background-image: url(\'https://akm-img-a-in.tosshub.com/indiatoday/images/story/201801/exam_preparation_tips.jpeg\'); height: 400px; "><div class="mask" style="background-color: rgba(0, 0, 0, 0.6)"><div class="d-flex justify-content-center align-items-center h-100"><div class="text-white"><h1 class="mb-3">Exam Helper</h1><h4 class="mb-3">Exam Solutions & More</h4></div></div></div></div><div><h1>Find Answer</h1><form><div class="form-group"><label for="course">Choose Course</label><select expr83="expr83" class="form-control"><option expr84="expr84"></option></select></div><div class="form-group"><label for="course">Choose Semester</label><select expr85="expr85" class="form-control"><option expr86="expr86"></option></select></div><button type="submit" class="btn btn-primary">Search</button></form></div>',
+        '<div class="p-5 text-center bg-image" style=" background-image: url(\'https://akm-img-a-in.tosshub.com/indiatoday/images/story/201801/exam_preparation_tips.jpeg\'); height: 400px; "><div class="mask" style="background-color: rgba(0, 0, 0, 0.6)"><div class="d-flex justify-content-center align-items-center h-100"><div class="text-white"><h1 class="mb-3">Exam Helper</h1><h4 class="mb-3">Exam Solutions & More</h4></div></div></div></div><div><h1>Find Answer</h1><div class="container py-5"><div class="mb-3"><label class="form-label">\n        Select Course\n      </label><select expr15="expr15" class="form-control" placeholder="Select Course"><option>Select Course</option><option expr16="expr16"></option></select></div><div expr17="expr17" class="mb-3"></div><div expr20="expr20" class="mb-3"></div><div expr23="expr23" class="mb-3"></div></div></div>',
         [
           {
-            'redundantAttribute': 'expr83',
-            'selector': '[expr83]',
+            'redundantAttribute': 'expr15',
+            'selector': '[expr15]',
 
             'expressions': [
               {
@@ -9551,7 +9589,11 @@
                       'evaluate': function(
                         scope
                       ) {
-                        return scope.course;
+                        return [
+                          scope.course
+                        ].join(
+                          ''
+                        );
                       }
                     },
                     {
@@ -9569,8 +9611,8 @@
               ]
             ),
 
-            'redundantAttribute': 'expr84',
-            'selector': '[expr84]',
+            'redundantAttribute': 'expr16',
+            'selector': '[expr16]',
             'itemName': 'course',
             'indexName': 'i',
 
@@ -9581,26 +9623,186 @@
             }
           },
           {
-            'redundantAttribute': 'expr85',
-            'selector': '[expr85]',
+            'type': bindingTypes.IF,
 
-            'expressions': [
-              {
-                'type': expressionTypes.EVENT,
-                'name': 'onchange',
+            'evaluate': function(
+              scope
+            ) {
+              return scope.state.semesters;
+            },
 
-                'evaluate': function(
-                  scope
-                ) {
-                  return (e) => scope.onSem(e);
+            'redundantAttribute': 'expr17',
+            'selector': '[expr17]',
+
+            'template': template(
+              '<label class="form-label">\n        Select Semester\n      </label><select expr18="expr18" class="form-control" placeholder="Select Semester"><option>Select Semester</option><option expr19="expr19"></option></select>',
+              [
+                {
+                  'redundantAttribute': 'expr18',
+                  'selector': '[expr18]',
+
+                  'expressions': [
+                    {
+                      'type': expressionTypes.EVENT,
+                      'name': 'onchange',
+
+                      'evaluate': function(
+                        scope
+                      ) {
+                        return (e) => scope.onSemester(e);
+                      }
+                    }
+                  ]
+                },
+                {
+                  'type': bindingTypes.EACH,
+                  'getKey': null,
+                  'condition': null,
+
+                  'template': template(
+                    ' ',
+                    [
+                      {
+                        'expressions': [
+                          {
+                            'type': expressionTypes.TEXT,
+                            'childNodeIndex': 0,
+
+                            'evaluate': function(
+                              scope
+                            ) {
+                              return [
+                                scope.semester
+                              ].join(
+                                ''
+                              );
+                            }
+                          },
+                          {
+                            'type': expressionTypes.ATTRIBUTE,
+                            'name': 'value',
+
+                            'evaluate': function(
+                              scope
+                            ) {
+                              return scope.semester;
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  ),
+
+                  'redundantAttribute': 'expr19',
+                  'selector': '[expr19]',
+                  'itemName': 'semester',
+                  'indexName': 'i',
+
+                  'evaluate': function(
+                    scope
+                  ) {
+                    return scope.state.semesters;
+                  }
                 }
-              }
-            ]
+              ]
+            )
           },
           {
-            'type': bindingTypes.EACH,
-            'getKey': null,
-            'condition': null,
+            'type': bindingTypes.IF,
+
+            'evaluate': function(
+              scope
+            ) {
+              return scope.state.subjects;
+            },
+
+            'redundantAttribute': 'expr20',
+            'selector': '[expr20]',
+
+            'template': template(
+              '<label class="form-label">\n        Select Subject\n      </label><select expr21="expr21" class="form-control" placeholder="Select Semester"><option>Select Subject</option><option expr22="expr22"></option></select>',
+              [
+                {
+                  'redundantAttribute': 'expr21',
+                  'selector': '[expr21]',
+
+                  'expressions': [
+                    {
+                      'type': expressionTypes.EVENT,
+                      'name': 'onchange',
+
+                      'evaluate': function(
+                        scope
+                      ) {
+                        return (e) => scope.onSubject(e);
+                      }
+                    }
+                  ]
+                },
+                {
+                  'type': bindingTypes.EACH,
+                  'getKey': null,
+                  'condition': null,
+
+                  'template': template(
+                    ' ',
+                    [
+                      {
+                        'expressions': [
+                          {
+                            'type': expressionTypes.TEXT,
+                            'childNodeIndex': 0,
+
+                            'evaluate': function(
+                              scope
+                            ) {
+                              return [
+                                scope.subject.get('name')
+                              ].join(
+                                ''
+                              );
+                            }
+                          },
+                          {
+                            'type': expressionTypes.ATTRIBUTE,
+                            'name': 'value',
+
+                            'evaluate': function(
+                              scope
+                            ) {
+                              return scope.subject.get('_id');
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  ),
+
+                  'redundantAttribute': 'expr22',
+                  'selector': '[expr22]',
+                  'itemName': 'subject',
+                  'indexName': 'i',
+
+                  'evaluate': function(
+                    scope
+                  ) {
+                    return scope.state.subjects;
+                  }
+                }
+              ]
+            )
+          },
+          {
+            'type': bindingTypes.IF,
+
+            'evaluate': function(
+              scope
+            ) {
+              return scope.state.subject;
+            },
+
+            'redundantAttribute': 'expr23',
+            'selector': '[expr23]',
 
             'template': template(
               ' ',
@@ -9614,34 +9816,17 @@
                       'evaluate': function(
                         scope
                       ) {
-                        return scope.semesters;
-                      }
-                    },
-                    {
-                      'type': expressionTypes.ATTRIBUTE,
-                      'name': 'value',
-
-                      'evaluate': function(
-                        scope
-                      ) {
-                        return scope.semesters;
+                        return [
+                          JSON.stringify(scope.state.subject.toJSON())
+                        ].join(
+                          ''
+                        );
                       }
                     }
                   ]
                 }
               ]
-            ),
-
-            'redundantAttribute': 'expr86',
-            'selector': '[expr86]',
-            'itemName': 'semesters',
-            'indexName': 'i',
-
-            'evaluate': function(
-              scope
-            ) {
-              return scope.state.semesters;
-            }
+            )
           }
         ]
       );
